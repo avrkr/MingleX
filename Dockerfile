@@ -3,32 +3,32 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy server and client package files (including lockfiles)
+# Copy server and client folders into the builder
 COPY server/ ./server/
 COPY client/ ./client/
 
-# Install server dependencies (npm install works without lockfile)
-RUN cd server && npm install
-# Install client dependencies and build
-RUN cd client && npm install && npm run build
+# Install server dependencies and build client
+RUN cd server && npm ci --omit=dev
+RUN cd client && npm ci && npm run build
 
 # ---- Production stage ----
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy built client and server code
+# Set the port environment variable; Railway will override with its own $PORT at runtime
+ENV PORT=5000
+
+# Copy built client and server from builder stage
 COPY --from=builder /app/client/dist ./client/dist
 COPY --from=builder /app/server ./server
-# Copy server's production node_modules from builder stage
 COPY --from=builder /app/server/node_modules ./server/node_modules
-COPY server/package.json ./
 
-# Copy root package.json (contains prod script)
+# Copy root package.json so `npm run` works if needed
 COPY package.json ./
-# Install root deps (none, but ensures npm can find scripts)
-RUN npm install --omit=dev
 
-EXPOSE 8080
+# Expose the default server port (the container will use the PORT env Railway supplies)
+EXPOSE 5000
 
-CMD ["npm","run","prod"]
+# Start the server (it reads process.env.PORT)
+CMD ["node","server/index.js"]
