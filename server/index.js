@@ -29,11 +29,6 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(express.json());
 app.use(cookieParser());
 
-// ---------- Serve static React build ----------
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
-});
 
 // ---------- Database ----------
 mongoose
@@ -54,6 +49,12 @@ app.get('/', (req, res) => {
     res.send('Chat API is running');
 });
 
+// ---------- Serve static React build (client-side routing fallback) ----------
+// Place after API routes so `/api/*` routes are not overridden.
+app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+});
 // ---------- Socket.io ----------
 const io = new Server(server, {
     cors: {
