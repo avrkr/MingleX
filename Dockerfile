@@ -24,6 +24,10 @@ COPY --from=builder /app/server ./server
 COPY --from=builder /app/server/node_modules ./server/node_modules
 COPY server/package.json ./
 COPY Procfile ./
+# Copy root package.json (contains prod script)
+COPY package.json ./
+# Install root deps (none, but ensures npm can find scripts)
+RUN npm install --omit=dev
 
 EXPOSE 8080
 
