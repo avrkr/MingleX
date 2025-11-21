@@ -25,7 +25,26 @@ const server = http.createServer(app);
 
 // ---------- Middleware ----------
 app.use(corsMiddleware);                     // CORS must be first
-app.use(helmet({ crossOriginResourcePolicy: false }));
+// Configure Helmet with a Content Security Policy that allows
+// API/WebSocket connections to the configured backend and permits
+// inline styles used by React runtime. Server headers take precedence
+// over any meta tags in HTML.
+const backendOrigin = process.env.BACKEND_URL || (process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',')[0] : 'https://mingle-xbackend.vercel.app');
+const backendWs = backendOrigin.replace(/^http/, 'ws');
+app.use(
+    helmet({
+        crossOriginResourcePolicy: false,
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                connectSrc: ["'self'", backendOrigin, backendWs],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", 'data:'],
+                scriptSrc: ["'self'"],
+            },
+        },
+    })
+);
 app.use(express.json());
 app.use(cookieParser());
 
