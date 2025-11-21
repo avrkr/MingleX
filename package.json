@@ -1,0 +1,11 @@
+{
+    "name": "minglex",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build:client": "cd client && npm ci && npm run build",
+        "install:server": "cd server && npm ci",
+        "prod": "npm run install:server && npm run build:client && node server/index.js"
+    },
+    "type": "commonjs"
+}
