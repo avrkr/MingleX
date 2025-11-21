@@ -8,8 +8,9 @@ COPY server/ ./server/
 COPY client/ ./client/
 
 # Install server dependencies and build client
-RUN cd server && npm ci --omit=dev
-RUN cd client && npm ci && npm run build
+# Use `npm install` because `npm ci` requires a lockfile which isn't present in this repo.
+RUN cd server && npm install --omit=dev
+RUN cd client && npm install && npm run build
 
 # ---- Production stage ----
 FROM node:20-alpine
