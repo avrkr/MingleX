@@ -1,7 +1,7 @@
 // CORS middleware for Vercel serverless functions
 module.exports = (req, res, next) => {
     // Always set CORS headers for Vercel
-    const origin = req.headers.origin || 'https://minglex.vercel.app';
+    const origin = req.headers.origin || 'https://web-production-9598d.up.railway.app';
 
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');

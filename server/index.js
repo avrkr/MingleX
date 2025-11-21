@@ -29,7 +29,7 @@ app.use(corsMiddleware);                     // CORS must be first
 // API/WebSocket connections to the configured backend and permits
 // inline styles used by React runtime. Server headers take precedence
 // over any meta tags in HTML.
-const backendOrigin = process.env.BACKEND_URL || (process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',')[0] : 'https://mingle-xbackend.vercel.app');
+const backendOrigin = process.env.BACKEND_URL || (process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',')[0] : 'https://web-production-9598d.up.railway.app');
 const backendWs = backendOrigin.replace(/^http/, 'ws');
 app.use(
     helmet({
