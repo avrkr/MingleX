@@ -52,8 +52,16 @@ app.get('/', (req, res) => {
 // ---------- Serve static React build (client-side routing fallback) ----------
 // Place after API routes so `/api/*` routes are not overridden.
 app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+// Fallback for SPA client-side routing. Serve index.html for non-API GET requests only.
+app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+    // Don't intercept API or socket routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket') || req.path.startsWith('/_next')) return next();
+    // If the request accepts HTML, serve the SPA entrypoint
+    if (req.accepts && req.accepts('html')) {
+        return res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+    }
+    next();
 });
 // ---------- Socket.io ----------
 const io = new Server(server, {
