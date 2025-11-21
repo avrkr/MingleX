@@ -18,13 +18,17 @@ const uploadRoutes = require('./routes/upload');
 const app = express();
 const server = http.createServer(app);
 
+// CRITICAL: Custom CORS middleware MUST be first for Vercel
+const corsMiddleware = require('./middleware/corsMiddleware');
+app.use(corsMiddleware);
+
 // Middleware
 app.use(helmet());
 
 // Enhanced CORS configuration for Vercel
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.CORS_ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-    : ['http://localhost:5173', 'http://localhost:5174'];
+    : ['http://localhost:5173', 'http://localhost:5174', 'https://minglex.vercel.app'];
 
 app.use(cors({
     origin: function (origin, callback) {
