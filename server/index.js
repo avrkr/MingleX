@@ -44,8 +44,8 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Simple health endpoint
-app.get('/', (req, res) => {
+// Simple health endpoint (moved off `/` so SPA can be served at root)
+app.get('/api/health', (req, res) => {
     res.send('Chat API is running');
 });
 
