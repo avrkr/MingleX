@@ -23,7 +23,7 @@ COPY --from=builder /app/server ./server
 # Copy server's production node_modules from builder stage
 COPY --from=builder /app/server/node_modules ./server/node_modules
 COPY server/package.json ./
-COPY Procfile ./
+COPY server/.env ./.env
 # Copy root package.json (contains prod script)
 COPY package.json ./
 # Install root deps (none, but ensures npm can find scripts)
